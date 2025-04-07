@@ -13,9 +13,6 @@
 
 #define PORT 9025
 
-// Logging
-//std::stringstream debugLogStream;
-
 void start_tcp_server()
 {
     int sockfd;
@@ -33,7 +30,7 @@ void start_tcp_server()
 
     if (sockfd < 0)
     {
-        DEBUGLOG << "Failed to create socket: " << strerror(errno);
+        Notify("Failed to create socket: %s", strerror(errno));
         for (;;);
     }
 
@@ -45,7 +42,7 @@ void start_tcp_server()
 
     if (bind(sockfd, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) != 0)
     {
-        DEBUGLOG << "Failed to bind to 0.0.0.0:" << PORT << ": " << strerror(errno);
+        Notify("Failed to bind to 0.0.0.0: %d %s", PORT, strerror(errno));
         for (;;);
     }
 
@@ -54,7 +51,7 @@ void start_tcp_server()
 
     if (listen(sockfd, 5) != 0)
     {
-        DEBUGLOG << "Failed to listen: " << strerror(errno);
+        Notify("Failed to listen: %s", strerror(errno));
         for (;;);
     }
 
@@ -64,17 +61,17 @@ void start_tcp_server()
 
         if (connfd < 0)
         {
-            DEBUGLOG << "Failed to accept client: " << strerror(errno);
+            Notify("Failed to accept client: %s", strerror(errno));
             for (;;);
         }
 
-        DEBUGLOG << "Accepted client '" << connfd << "'";
+        Notify("Accepted client %d", connfd);
 
         // Write a "hello" message then terminate the connection
         const char msg[] = "hello\n";
         write(connfd, msg, sizeof(msg));
         close(connfd);
 
-        DEBUGLOG << "Closed client '" << connfd << "'";
+        Notify("Closed client %d", connfd);
     }
 }

@@ -1,11 +1,11 @@
-# Sample: font
+# Sample: Sandbox
 
 [![Version](https://img.shields.io/badge/Version-1.01-brightgreen.svg)](https://github.com/Cryptogenic/OpenOrbis-PS4-Toolchain)
 
 This project contains example code for initializing the SceVideoOut library, and for CPU rendering text on the screen with an arial font. A screenshot from the running application can be seen below.
 
-- **Title ID**: BREW00081
-- **Content ID**: IV0000-BREW00081_00-FONTDRAWEX000000
+- **Title ID**: BREW00085
+- **Content ID**: IV0000-BREW00085_00-NETWORKKEX000000
 
 ![screenshot](screenshot.jpg)
 
@@ -13,7 +13,7 @@ This project contains example code for initializing the SceVideoOut library, and
 
 ## Directory structure
 ```
-samples/font
+samples/sandbox
 |-- assets
     |-- fonts
         |-- Gontserrat-Regular.ttf  // Font truetype file
@@ -22,11 +22,13 @@ samples/font
     |-- x64
         |-- Debug                   // Object files / intermediate directory
     |-- build.bat                   // Batch file for building on Windows
-    |-- font.vcxproj                // Visual studio project files
-    |-- font.vcxproj.filters
-    |-- font.cvxproj.user
-    |-- graphics.cpp                // Source code related to graphics / interfacing with SceVideoOut
-    |-- graphics.h                  // Header file for graphics helper functions
+    |-- sandbox.vcxproj                // Visual studio project files
+    |-- sandbox.vcxproj.filters
+    |-- sandbox.cvxproj.user
+    |-- text_drawer.cpp                // Source code interfacing with SceVideoOut graphics
+    |-- text_drawer.hpp                  // Header file for graphics helper functions
+    |-- tcp_server.cpp                // Source code interfacing with tcp socket networking
+    |-- tcp_server.hpp                  // Header file for networking helper functions
     |-- main.cpp                    // main source file
 |-- sce_module                      // Dependency modules for the pkg
     |-- libSceFios2.prx
@@ -53,7 +55,7 @@ The ELF, Orbis ELF (OELF), and object files will all be stored in the intermedia
 - libSceVideoOut
 - libSceSysmodule
 - libSceFreeType
-
+- lSceUserService
 
 
 ## Building
