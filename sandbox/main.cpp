@@ -6,8 +6,8 @@ std::stringstream debugLogStream;
 
 int main()
 {
-    start_tcp_server();
-    //drawSampleText();
+    //start_tcp_server();
+    drawSampleText();
     return 0;
 }
 

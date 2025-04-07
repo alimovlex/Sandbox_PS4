@@ -5,6 +5,9 @@
 
 #include <sstream>
 #include <string>
+#include <iostream>
+#include <thread>
+#include <mutex>
 
 #include <orbis/libkernel.h>
 #include <orbis/Sysmodule.h>
@@ -21,35 +24,65 @@
 #define FRAME_DEPTH        4
 
 // Font information
-#define FONT_SIZE_LARGE  128
-#define FONT_SIZE_SMALL   64
+#define FONT_SIZE   	   42
+
+// Logging
+//std::stringstream debugLogStream;
 
 // Background and foreground colors
 Color bgColor;
 Color fgColor;
 
 // Font faces
-FT_Face fontLarge;
-FT_Face fontSmall;
+FT_Face fontTxt;
 
 int frameID = 0;
 
-void drawSampleText() {
+// Threading stuff
+std::stringstream screenTextStream;
+std::mutex mtx;
+
+void threadedFunctionA()
+{
+    for (int count = 0; count < 10; count++)
+    {
+        mtx.lock();
+        screenTextStream << "Thread A is running: " << count << "\n";
+        mtx.unlock();
+
+        sceKernelUsleep(2 * 100000);
+    }
+}
+
+void threadedFunctionB()
+{
+    for (int count = 0; count < 10; count++)
+    {
+        mtx.lock();
+        screenTextStream << "Thread B is running: " << count << "\n";
+        mtx.unlock();
+
+        sceKernelUsleep(2 * 100000);
+    }
+}
+
+int drawSampleText()
+{
     int rc;
     int video;
     int curFrame = 0;
-    int ret = sceUserServiceInitialize(NULL);
+    
     // No buffering
     setvbuf(stdout, NULL, _IONBF, 0);
     
     // Create a 2D scene
-    //Notify("Creating a scene");
+    DEBUGLOG << "Creating a scene";
     
     auto scene = new Scene2D(FRAME_WIDTH, FRAME_HEIGHT, FRAME_DEPTH);
     
     if(!scene->Init(0xC000000, 2))
     {
-    	Notify("Failed to initialize 2D scene");
+    	DEBUGLOG << "Failed to initialize 2D scene";
     	for(;;);
     }
 
@@ -60,32 +93,24 @@ void drawSampleText() {
     // Initialize the font faces with arial (must be included in the package root!)
     const char *font = "/app0/assets/fonts/Gontserrat-Regular.ttf";
     
-    //Notify("Initializing font %s", font);
+    DEBUGLOG << "Initializing font (" << font << ")";
 
-    if(!scene->InitFont(&fontLarge, font, FONT_SIZE_LARGE))
+    if(!scene->InitFont(&fontTxt, font, FONT_SIZE))
     {
-    	Notify("Failed to initialize large font %s", font);
+    	DEBUGLOG << "Failed to initialize font '" << font << "'";
     	for(;;);
     }
 
-    if(!scene->InitFont(&fontSmall, font, FONT_SIZE_SMALL))
-    {
-    	Notify("Failed to initialize small font %s", font);
-    	for(;;);
-    }
+    DEBUGLOG << "Entering draw loop...";
     
-    Notify("Entering draw loop...");
+    // Setup threads
+    std::thread t1(threadedFunctionA);
+    std::thread t2(threadedFunctionB);
+
     // Draw loop
     for (;;)
     {
-        // Draw the sample text
-        std::string textLarge = "Hello World!";
-        std::string textSmall = "Built by syubomj.";
-        //const char *textLarge = "OpenOrbis Sample\nHello, World!";
-        //const char *textSmall = "Built with the OpenOrbis toolchain (in C++!)";
-        
-        scene->DrawText((char *)textLarge.c_str(), fontLarge, 150, 400, bgColor, fgColor);
-        scene->DrawText((char *)textSmall.c_str(), fontSmall, 150, 750, bgColor, fgColor);
+        scene->DrawText((char *)screenTextStream.str().c_str(), fontTxt, 150, 150, bgColor, fgColor);
 
         // Submit the frame buffer
         scene->SubmitFlip(frameID);
@@ -95,4 +120,7 @@ void drawSampleText() {
         scene->FrameBufferSwap();
         frameID++;
     }
+
+    return 0;
 }
+
