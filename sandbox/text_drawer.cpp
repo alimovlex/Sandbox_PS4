@@ -44,18 +44,22 @@ std::mutex mtx;
 
 void threadedFunctionA()
 {
+
+    /*
     for (int count = 0; count < 10; count++)
     {
         mtx.lock();
-        screenTextStream << "Thread A is running: " << count << "\n";
+        screenTextStream << "Thread A is running: " << count << std::endl;
         mtx.unlock();
 
         sceKernelUsleep(2 * 100000);
     }
+    */
 }
 
 void threadedFunctionB()
 {
+    /*
     for (int count = 0; count < 10; count++)
     {
         mtx.lock();
@@ -64,6 +68,18 @@ void threadedFunctionB()
 
         sceKernelUsleep(2 * 100000);
     }
+    */
+}
+
+void threadedLogger(std::string &log_msg) {
+    mtx.lock();
+    screenTextStream << log_msg << std::endl;
+    mtx.unlock();
+    sceKernelUsleep(2 * 100000);
+}
+
+void threadedNotifier() {
+
 }
 
 int drawSampleText()
@@ -71,13 +87,15 @@ int drawSampleText()
     int rc;
     int video;
     int curFrame = 0;
-    
+    std::string debug_msg;
     // No buffering
     setvbuf(stdout, NULL, _IONBF, 0);
     
     // Create a 2D scene
-    DEBUGLOG << "Creating a scene";
-    
+    debug_msg = "Creating a scene";
+    std::thread t1(threadedLogger, std::ref(debug_msg));
+    t1.join();    
+
     auto scene = new Scene2D(FRAME_WIDTH, FRAME_HEIGHT, FRAME_DEPTH);
     
     if(!scene->Init(0xC000000, 2))
@@ -101,11 +119,12 @@ int drawSampleText()
     	for(;;);
     }
 
-    DEBUGLOG << "Entering draw loop...";
+    Notify("Entering draw loop...");
     
     // Setup threads
-    std::thread t1(threadedFunctionA);
-    std::thread t2(threadedFunctionB);
+    //std::thread t1(threadedFunctionA);
+    //std::thread t2(threadedFunctionB);
+    
 
     // Draw loop
     for (;;)
