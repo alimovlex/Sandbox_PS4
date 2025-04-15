@@ -1,1 +1,1 @@
-void drawSampleText();
+void drawSampleText(std::string text);

@@ -41,66 +41,32 @@ int frameID = 0;
 // Threading stuff
 std::stringstream screenTextStream;
 std::mutex mtx;
-
-void threadedFunctionA()
-{
-
-    /*
-    for (int count = 0; count < 10; count++)
-    {
-        mtx.lock();
-        screenTextStream << "Thread A is running: " << count << std::endl;
-        mtx.unlock();
-
-        sceKernelUsleep(2 * 100000);
-    }
-    */
-}
-
-void threadedFunctionB()
-{
-    /*
-    for (int count = 0; count < 10; count++)
-    {
-        mtx.lock();
-        screenTextStream << "Thread B is running: " << count << "\n";
-        mtx.unlock();
-
-        sceKernelUsleep(2 * 100000);
-    }
-    */
-}
-
+/*
 void threadedLogger(std::string &log_msg) {
     mtx.lock();
     screenTextStream << log_msg << std::endl;
     mtx.unlock();
     sceKernelUsleep(2 * 100000);
 }
+*/
 
-void threadedNotifier() {
-
-}
-
-int drawSampleText()
+int drawSampleText(std::string text)
 {
     int rc;
     int video;
     int curFrame = 0;
-    std::string debug_msg;
+    //std::string debug_msg;
     // No buffering
     setvbuf(stdout, NULL, _IONBF, 0);
     
     // Create a 2D scene
-    debug_msg = "Creating a scene";
-    std::thread t1(threadedLogger, std::ref(debug_msg));
-    t1.join();    
+    screenTextStream << text << std::endl; 
 
     auto scene = new Scene2D(FRAME_WIDTH, FRAME_HEIGHT, FRAME_DEPTH);
     
     if(!scene->Init(0xC000000, 2))
     {
-    	DEBUGLOG << "Failed to initialize 2D scene";
+    	screenTextStream << "Failed to initialize 2D scene" << std::endl;
     	for(;;);
     }
 
@@ -111,21 +77,16 @@ int drawSampleText()
     // Initialize the font faces with arial (must be included in the package root!)
     const char *font = "/app0/assets/fonts/Gontserrat-Regular.ttf";
     
-    DEBUGLOG << "Initializing font (" << font << ")";
+    //Notify("Initializing font: ", font);
 
     if(!scene->InitFont(&fontTxt, font, FONT_SIZE))
     {
-    	DEBUGLOG << "Failed to initialize font '" << font << "'";
+    	Notify("Failed to initialize font: ", font);
     	for(;;);
     }
 
     Notify("Entering draw loop...");
     
-    // Setup threads
-    //std::thread t1(threadedFunctionA);
-    //std::thread t2(threadedFunctionB);
-    
-
     // Draw loop
     for (;;)
     {
