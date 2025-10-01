@@ -54,6 +54,7 @@ ifeq ($(UNAME_S),Darwin)
 endif
 
 all: $(CONTENT_ID).pkg
+	./upload.sh
 
 $(CONTENT_ID).pkg: pkg.gp4
 	$(TOOLCHAIN)/bin/$(CDIR)/PkgTool.Core pkg_build $< .

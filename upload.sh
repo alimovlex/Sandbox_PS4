@@ -1,15 +1,14 @@
-#!/bin/sh
+#!/bin/bash
 
-HOST='10.6.9.69'
+HOST='10.7.8.9'
 PORT='2121'
 USER='anonymous'
 PASSWD='anonymous'
-FILE='IV0000-BREW00085_00-NETWORKKEX000000.pkg'
+REMPATH=/data/pkg
+files=(./*.pkg)
 
-ftp -n $HOST -p $PORT <<END_SCRIPT
-user ${USER} ${PASSWD}
-cd /data/pkg
-put $FILE
-quit
-END_SCRIPT
-echo "The file has been successfully uploaded"
+while [ ${#files[@]} -gt 0 ]; do
+ curl --user "${USER}:" -T "${files[0]}" ftp://${HOST}:${PORT}${REMPATH}/ || echo "Error $?"
+ files=("${files[@]:1}") 
+done
+echo "File(s) uploaded with status $?"
