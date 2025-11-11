@@ -1,0 +1,1 @@
+void ft_logger(char* LOG_LEVEL, void(*func)());
