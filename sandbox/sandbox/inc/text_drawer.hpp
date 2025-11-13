@@ -1,1 +1,0 @@
-void drawSampleText(std::string text);

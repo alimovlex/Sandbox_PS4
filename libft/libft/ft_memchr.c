@@ -6,7 +6,7 @@
 /*   By: alalimov <alalimov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 18:17:28 by alalimov          #+#    #+#             */
-/*   Updated: 2025/10/27 11:45:29 by alalimov         ###   ########.fr       */
+/*   Updated: 2025/10/23 06:42:36 by alalimov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
  * @brief ft_memchr
  *
  * The ft_memchr() function locates the first occurrence of c 
- * (converted to an unsigned char) in string s.
+ * (converted to an unsigned char) in string b.
  * The ft_memchr() function scans the initial n bytes of the memory 
  * area pointed to by s for the first instance of c. Both c and 
  * the bytes of the memory area pointed to by s are interpreted as unsigned char.

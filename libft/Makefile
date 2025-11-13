@@ -1,9 +1,9 @@
 # Library metadata.
-TARGET := libft.prx
-TARGETSTUB := libft_stub.so
+TARGET := libExample.prx
+TARGETSTUB := libExample_stub.so
 
 # Libraries linked into the ELF.
-LIBS 		 := -lc -lc++ -lkernel
+LIBS 		 := -lc -lkernel
 
 # Additional compile flags.
 #EXTRAFLAGS  :=
@@ -23,8 +23,8 @@ OBJS        := $(patsubst $(PROJDIR)/%.c, $(INTDIR)/%.o, $(CFILES)) $(patsubst $
 STUBOBJS    := $(patsubst $(PROJDIR)/%.c, $(INTDIR)/%.o, $(CFILES)) $(patsubst $(PROJDIR)/%.cpp, $(INTDIR)/%.o.stub, $(CPPFILES)) $(patsubst $(COMMONDIR)/%.cpp, $(INTDIR)/%.o.stub, $(COMMONFILES))
 
 # Define final C/C++ flags
-CFLAGS      := --target=x86_64-pc-freebsd12-elf -fPIC -funwind-tables -c $(EXTRAFLAGS) -isysroot $(TOOLCHAIN) -isystem $(TOOLCHAIN)/include -std=gnu11
-CXXFLAGS    := $(CFLAGS) -isystem $(TOOLCHAIN)/include/c++/v1 -std=gnu++17
+CFLAGS      := --target=x86_64-pc-freebsd12-elf -fPIC -funwind-tables -c $(EXTRAFLAGS) -isysroot $(TOOLCHAIN) -isystem $(TOOLCHAIN)/include
+CXXFLAGS    := $(CFLAGS) -isystem $(TOOLCHAIN)/include/c++/v1
 LDFLAGS     := -m elf_x86_64 -pie --script $(TOOLCHAIN)/link.x --eh-frame-hdr -L$(TOOLCHAIN)/lib $(LIBS) $(TOOLCHAIN)/lib/crtlib.o
 
 # Create the intermediate directory incase it doesn't already exist.
@@ -59,10 +59,10 @@ $(INTDIR)/%.o: $(PROJDIR)/%.c
 $(INTDIR)/%.o: $(PROJDIR)/%.cpp
 	$(CCX) $(CXXFLAGS) -o $@ $<
 
-$(INTDIR)/%.o.stub: $(PROJDIR)/%.c
+$(INTDIR)/%.o.stub: $(PROJDIR)/%.stub.c
 	$(CC) -target x86_64-pc-linux-gnu -ffreestanding -nostdlib -fno-builtin -fPIC -c $(TOOLCHAIN)/include -o $@ $<
 
-$(INTDIR)/%.o.stub: $(PROJDIR)/%.cpp
+$(INTDIR)/%.o.stub: $(PROJDIR)/%.stub.cpp
 	$(CCX) -target x86_64-pc-linux-gnu -ffreestanding -nostdlib -fno-builtin -fPIC -c $(TOOLCHAIN)/include -o $@ $<
 
 .PHONY: clean
